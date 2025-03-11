@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Chess Game</h1>
+        <div class="game-info">
+            <div id="turn-indicator">White's turn</div>
+            <button id="reset-button">New Game</button>
+        </div>
+        <div id="chessboard"></div>
+        <div id="captured-pieces">
+            <div id="white-captured" class="captured-area">
+                <h3>Captured by White</h3>
+                <div class="pieces"></div>
+            </div>
+            <div id="black-captured" class="captured-area">
+                <h3>Captured by Black</h3>
+                <div class="pieces"></div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
