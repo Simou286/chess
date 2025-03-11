@@ -1,195 +1,3 @@
-# Chess Game Project
-
-I'll create a simple chess game using HTML, CSS, and JavaScript. This will be a basic implementation that allows two players to play chess on the same computer.
-
-Let's start by creating the necessary files:
-
-## HTML File
-
-```html:c:\Users\simon\Desktop\Trae\index.html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Game</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Chess Game</h1>
-        <div class="game-info">
-            <div id="turn-indicator">White's turn</div>
-            <button id="reset-button">New Game</button>
-        </div>
-        <div id="chessboard"></div>
-        <div id="captured-pieces">
-            <div id="white-captured" class="captured-area">
-                <h3>Captured by White</h3>
-                <div class="pieces"></div>
-            </div>
-            <div id="black-captured" class="captured-area">
-                <h3>Captured by Black</h3>
-                <div class="pieces"></div>
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
-```
-
-## CSS File
-
-```css:c:\Users\simon\Desktop\Trae\style.css
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-}
-
-.container {
-    max-width: 800px;
-    width: 100%;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.game-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-#turn-indicator {
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-
-#reset-button {
-    padding: 8px 16px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#reset-button:hover {
-    background-color: #45a049;
-}
-
-#chessboard {
-    width: 100%;
-    max-width: 560px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    border: 2px solid #333;
-}
-
-.square {
-    aspect-ratio: 1/1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2.5rem;
-    cursor: pointer;
-    position: relative;
-}
-
-.white {
-    background-color: #f0d9b5;
-}
-
-.black {
-    background-color: #b58863;
-}
-
-.selected {
-    background-color: #aec6cf !important;
-}
-
-.valid-move {
-    position: relative;
-}
-
-.valid-move::after {
-    content: "";
-    position: absolute;
-    width: 25%;
-    height: 25%;
-    background-color: rgba(0, 128, 0, 0.5);
-    border-radius: 50%;
-    z-index: 1;
-}
-
-.check {
-    background-color: #ff6b6b !important;
-}
-
-#captured-pieces {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.captured-area {
-    width: 48%;
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.captured-area h3 {
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.pieces {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    font-size: 1.5rem;
-}
-
-@media (max-width: 600px) {
-    #chessboard {
-        max-width: 100%;
-    }
-    
-    .square {
-        font-size: 1.8rem;
-    }
-    
-    #captured-pieces {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .captured-area {
-        width: 100%;
-    }
-}
-```
-
-## JavaScript File
-
-```javascript:c:\Users\simon\Desktop\Trae\script.js
 document.addEventListener('DOMContentLoaded', () => {
     const chessboard = document.getElementById('chessboard');
     const turnIndicator = document.getElementById('turn-indicator');
@@ -462,4 +270,77 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'queen':
                 // Combination of rook and bishop movement
                 for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+                    let r = row + dr;
+                    let c = col + dc;
                     
+                    while (isInBounds(r, c)) {
+                        if (!board[r][c]) {
+                            moves.push({ row: r, col: c });
+                        } else {
+                            if (board[r][c].color !== color) {
+                                moves.push({ row: r, col: c });
+                            }
+                            break;
+                        }
+                        r += dr;
+                        c += dc;
+                    }
+                }
+                break;
+                
+            case 'king':
+                // One square in any direction
+                for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]]) {
+                    const r = row + dr;
+                    const c = col + dc;
+                    
+                    if (isInBounds(r, c) && (!board[r][c] || board[r][c].color !== color)) {
+                        moves.push({ row: r, col: c });
+                    }
+                }
+                break;
+        }
+        
+        return moves;
+    }
+    
+    // Check if coordinates are within the board
+    function isInBounds(row, col) {
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
+    }
+    
+    // Highlight valid moves
+    function highlightValidMoves() {
+        for (const move of validMoves) {
+            const square = document.querySelector(`.square[data-row="${move.row}"][data-col="${move.col}"]`);
+            square.classList.add('valid-move');
+        }
+    }
+    
+    // Clear all highlights
+    function clearHighlights() {
+        const squares = document.querySelectorAll('.square');
+        squares.forEach(square => {
+            square.classList.remove('selected', 'valid-move');
+        });
+    }
+    
+    // Reset the game
+    function resetGame() {
+        selectedPiece = null;
+        currentPlayer = 'white';
+        validMoves = [];
+        whiteCaptured.innerHTML = '';
+        blackCaptured.innerHTML = '';
+        turnIndicator.textContent = "White's turn";
+        
+        initializeBoard();
+        renderBoard();
+    }
+    
+    // Event listener for reset button
+    resetButton.addEventListener('click', resetGame);
+    
+    // Initialize the game
+    resetGame();
+});
