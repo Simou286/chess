@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Select a different piece of the same color
                 clearHighlights();
                 selectedPi
-                              // Select a different piece of the same color
+                // Select a different piece of the same color
                 clearHighlights();
                 selectedPiece = square;
                 square.classList.add('selected');
